@@ -1,4 +1,4 @@
-# bamazonCustomer.js
+# bamazonCustomer
 Created an MySQL Database called bamazon.
 Then created a Table inside of that database called products.
 The products table have each of the following columns:
