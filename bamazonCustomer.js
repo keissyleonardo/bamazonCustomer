@@ -54,29 +54,39 @@ function AskQuestion(){
 	})
 }
 
+
 function buyItem(){ 
-	inquirer.prompt({ 
+	inquirer.prompt([
+	{
 		name: "units", 
 		type: "input", 
-		message: "How many units would you like to buy?"
-		// validate: function(remaining){
-		// 	if (isNaN(remaining) === false){
-		// 		return true; 
-		// 	}
-		// 	    return false; 
-		// }
-
-	}).then(function(answer){ 
-		console.log(answer.units); 
-		connection.query("UPDATE products SET stock_quantity = stock_quantity - tosubtract", { 
-			function(error){ 
-				if (error) throw error; 
-				console.log("Thanks for doing business with us!"); 
+		message: "How many units would you like to buy?",
+		validate: function(value){ 
+			if (isNaN(value) === false){ 
+				return true; 
 			}
-
-		})
-
-	})
-
+				return false; 
+		}
+	}
+	]).then(function(answer){ 
+		deducts(3, 2);
+		// console.log("this works");
+	})	
 }
+
+function deducts(id, quantity){ 
+	if (quantity > 0){ 
+		connection.query('SELECT stock_quantity FROM products WHERE id', function(error, results){ 
+			if (error) throw error; 
+			if (results[0].stock_quantity >= quantity){ 
+				console.log("Thanks for doing business with us!"); 
+			} else { 
+				console.log("We dont have enough of those");
+			}
+			AskQuestion();
+		})
+	}
+}
+
+
 
