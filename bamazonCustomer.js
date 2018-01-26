@@ -18,11 +18,11 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
-  BuyItem();
+  AskQuestion();	
 });
 
 
-function BuyItem(){ 
+function AskQuestion(){ 
 
 	// request details from all available items to purchase from 
 	connection.query("SELECT * FROM products", function(err, results) {
@@ -36,8 +36,8 @@ function BuyItem(){
 	        	choices: function() {
 	            	var choiceArray = [];
 	            	for (var i = 0; i < results.length; i++) {
-						choiceArray.push('Product ' + results[i].product_name + '\t' + 'Department ' + results[i].department_name 
-							+ '\t' + 'Price '+ results[i].price + '\t' + 'Units Available ' + results[i].stock_quantity);
+						choiceArray.push('Product: ' + results[i].product_name + '\t' + 'Department: ' + results[i].department_name 
+							+ '\t' + 'Price: $'+ results[i].price + '\t' + 'Units Available: ' + results[i].stock_quantity);
 					}
 
 					return choiceArray; 
@@ -47,25 +47,36 @@ function BuyItem(){
 			}
 
 		]).then(function(answer){ 
-			var chosenItem; 
-			for(var i = 0; results.length; i++){
-				if (results[i].id === answer.choice){ 
-					chosenItem = answer; 
-				}
-
+			switch(answer.choice){
 			}
-			if (results[i].stock_quantity < chosenItem){
-				console.log("Stock Is Available");
-				// results[i].stock_quantity--; 
-			} else { 
-				console.log("Insuficient quantity");
+			buyItem();
+		})
+	})
+}
+
+function buyItem(){ 
+	inquirer.prompt({ 
+		name: "units", 
+		type: "input", 
+		message: "How many units would you like to buy?"
+		// validate: function(remaining){
+		// 	if (isNaN(remaining) === false){
+		// 		return true; 
+		// 	}
+		// 	    return false; 
+		// }
+
+	}).then(function(answer){ 
+		console.log(answer.units); 
+		connection.query("UPDATE products SET stock_quantity = stock_quantity - tosubtract", { 
+			function(error){ 
+				if (error) throw error; 
+				console.log("Thanks for doing business with us!"); 
 			}
 
 		})
 
-
 	})
-
 
 }
 
